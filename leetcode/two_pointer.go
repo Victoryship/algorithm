@@ -1,6 +1,56 @@
 package leetcode
 
 /*
+LongestPalindrome 5. 最长回文子串
+给你一个字符串s，找到s中最长的回文子串。
+
+示例 1：
+
+	输入：s = "babad"
+	输出："bab"
+	解释："aba" 同样是符合题意的答案。
+
+示例 2：
+
+	输入：s = "cbbd"
+	输出："bb"
+*/
+func LongestPalindrome(s string) string {
+	var (
+		length = len(s)
+		res    string
+	)
+
+	if length <= 1 {
+		return s
+	}
+
+	for i := 0; i < length; i++ {
+		str1 := getPalindrome(s, i, i, length)   // 奇数回文子串
+		str2 := getPalindrome(s, i, i+1, length) // 偶数回文子串
+
+		if len(str1) > len(str2) && len(str1) > len(res) {
+			res = str1
+		}
+
+		if len(str2) > len(str1) && len(str2) > len(res) {
+			res = str2
+		}
+	}
+
+	return res
+}
+
+// getPalindrome 获取回文字符串
+func getPalindrome(s string, l, r, length int) string {
+	for l >= 0 && r < length && s[l] == s[r] {
+		l--
+		r++
+	}
+	return s[l+1 : r]
+}
+
+/*
 MaxArea 11. 盛最多水的容器
 给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
 找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
@@ -109,4 +159,77 @@ func RemoveElement(nums []int, val int) int {
 		fast++
 	}
 	return slow
+}
+
+/*
+Trap 42. 接雨水
+给定n个非负整数表示每个宽度为1的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+示例 1：
+
+	输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+	输出：6
+	解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+
+示例 2：
+
+	输入：height = [4,2,0,3,2,5]
+	输出：9
+*/
+func Trap(height []int) int {
+	res, length := 0, len(height)
+	if length < 3 {
+		return res
+	}
+
+	// 能接住雨水的数组必须要有先减后增的趋势。 单调递增、递减或者先增后减趋势都无法接雨水
+	for i := 1; i < length; i++ {
+		// 找到递减趋势的位置
+		if height[i] >= height[i-1] {
+			continue
+		}
+
+		flag := 0
+		for j := i + 1; j < length; j++ {
+			// 找到递增趋势的位置
+			if height[j] <= height[j-1] {
+				continue
+			}
+			flag = j
+			break
+		}
+
+		// 没有递增趋势返回结果
+		if flag == 0 {
+			return res
+		}
+
+		// 递增开始往后找到最大值
+		maxFlag, maxValue := flag, height[flag]
+		for flag < length {
+			if height[flag] > maxValue {
+				maxValue = height[flag]
+				maxFlag = flag
+			}
+
+			// 雨水最多不超过递减的起始位置值
+			if maxValue > height[i-1] {
+				maxValue = height[i-1]
+				break
+			}
+
+			flag++
+		}
+
+		// 计算接到雨水
+		for k := i; k < maxFlag; k++ {
+			if maxValue-height[k] > 0 {
+				res += maxValue - height[k]
+			}
+		}
+
+		i = maxFlag
+	}
+
+	return res
 }
