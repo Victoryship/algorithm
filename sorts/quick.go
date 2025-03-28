@@ -1,7 +1,6 @@
 package sorts
 
 func QuickSort(data []int, start, end int) {
-
 	if start >= end {
 		return
 	}

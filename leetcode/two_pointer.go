@@ -182,53 +182,10 @@ func Trap(height []int) int {
 		return res
 	}
 
-	// 能接住雨水的数组必须要有先减后增的趋势。 单调递增、递减或者先增后减趋势都无法接雨水
+	maxLeft, maxRight := height[0], height[length-1]
+	// 能接住雨水的数组必须要有低谷，即对于某个位置。 在左右两边找到最大的柱子。 该位置能接的雨水为其中更小的一个值
 	for i := 1; i < length; i++ {
-		// 找到递减趋势的位置
-		if height[i] >= height[i-1] {
-			continue
-		}
 
-		flag := 0
-		for j := i + 1; j < length; j++ {
-			// 找到递增趋势的位置
-			if height[j] <= height[j-1] {
-				continue
-			}
-			flag = j
-			break
-		}
-
-		// 没有递增趋势返回结果
-		if flag == 0 {
-			return res
-		}
-
-		// 递增开始往后找到最大值
-		maxFlag, maxValue := flag, height[flag]
-		for flag < length {
-			if height[flag] > maxValue {
-				maxValue = height[flag]
-				maxFlag = flag
-			}
-
-			// 雨水最多不超过递减的起始位置值
-			if maxValue > height[i-1] {
-				maxValue = height[i-1]
-				break
-			}
-
-			flag++
-		}
-
-		// 计算接到雨水
-		for k := i; k < maxFlag; k++ {
-			if maxValue-height[k] > 0 {
-				res += maxValue - height[k]
-			}
-		}
-
-		i = maxFlag
 	}
 
 	return res
