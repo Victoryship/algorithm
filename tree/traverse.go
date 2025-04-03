@@ -20,7 +20,10 @@ func PreOrderIteration(root *TreeNode) []int {
 	for root != nil || len(stack) > 0 {
 		if root != nil {
 			res = append(res, root.Val)
-			stack = append(stack, root)
+			// 仅当节点存在子节点时才入栈
+			if root.Left != nil || root.Right != nil {
+				stack = append(stack, root)
+			}
 			root = root.Left
 			continue
 		}
@@ -90,7 +93,7 @@ func PostOrderIteration(root *TreeNode) []int {
 			continue
 		}
 
-		// 右子树入栈
+		// 右子树先入栈
 		node := stack[len(stack)-1]
 		if node.Right != nil && node.Right != pre {
 			root = node.Right
