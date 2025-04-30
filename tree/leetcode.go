@@ -139,15 +139,21 @@ func Flatten(root *TreeNode) {
 		return
 	}
 
+	// 递归处理左右子树（先处理子树保证左右子树已经展开成链表）
 	Flatten(root.Left)
 	Flatten(root.Right)
 
+	// 记录右子树位置
 	temp := root.Right
+	// 将左子树移到右子树的位置，左指针置空
 	root.Left, root.Right = nil, root.Left
 
+	// 如果移动后右子树不为空，则root节点移动到下一个节点处理
 	for root.Right != nil {
 		root = root.Right
 	}
+
+	// 把原本右子树的位置拼接到展开的左子的右节点
 	root.Right = temp
 }
 

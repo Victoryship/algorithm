@@ -86,7 +86,7 @@ func TestMergeTwoLists(t *testing.T) {
 	fmt.Println(result)
 }
 
-func TestReverseList2(t *testing.T) {
+func TestReverseKGroup(t *testing.T) {
 	data := []int{1, 2, 3, 4, 5}
 	head := BuildListByArr(data)
 	prev := new(ListNode)

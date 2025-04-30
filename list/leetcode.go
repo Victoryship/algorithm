@@ -7,6 +7,15 @@ package list
     输入：head = [1,2,3,4,5]
     输出：[5,4,3,2,1]
 */
+
+/*
+head链表后移，逐步构建新的p链表结构
+初始条件： p->nil, head->1->2->3->4->nil
+1、 p->1->nil, head->2->3->4->nil
+2、 p->2->1->nil, head->3->4->nil
+3、 p->3->2->1->nil, head->4->nil
+4、 p->4->3->2->1->nil, head->nil
+*/
 func ReverseList(head *ListNode) *ListNode {
 	if head == nil {
 		return nil
@@ -20,6 +29,35 @@ func ReverseList(head *ListNode) *ListNode {
 	}
 
 	return p
+}
+
+/*
+head链表后移，pre始终指向虚拟头节点
+初始条件：  p->nil->1->2->3->4->nil, head->1->2->3->4->nil
+开始循环:
+1、
+初始： temp->2->3->4->nil,head->1->2->3->4->nil,p->nil->1->2->3->4->nil,
+交换后： temp->2->1->3->4->nil,head->1->3->4->nil,p->nil->2->1->3->4->nil,
+2、
+初始： temp->3->4->nil,head->1->3->4->nil,p->nil->2->1->3->4->nil,
+交换后： temp->3->2->1->4->nil,head->1->4->nil,p->nil->3->2->1->4->nil,
+3、
+初始： temp->4->nil,head->1->4->nil,p->nil->3->2->1->4->nil,
+交换后： temp->4->3->2->1->nil,head->4->nil,p->nil->4->3->2->1->nil,
+*/
+func ReverseList2(head *ListNode) *ListNode {
+	if head == nil {
+		return nil
+	}
+	p := &ListNode{Next: head}
+	for head != nil && head.Next != nil {
+		temp := head.Next
+		head.Next = temp.Next
+		temp.Next = p.Next
+		p.Next = temp
+	}
+
+	return p.Next
 }
 
 func DfsReverseList(head *ListNode) *ListNode {
@@ -315,20 +353,104 @@ func SwapPairsDfs(head *ListNode) *ListNode {
 	return node
 }
 
+/*
+*
+
+ 25. K 个一组翻转链表
+    给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
+    k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+    输入：head = [1,2,3,4,5], k = 3
+    输出：[3,2,1,4,5]
+
+    输入：head = [1,2,3,4,5], k = 2
+    输出：[2,1,4,3,5]
+*/
+func ReverseKGroup(head *ListNode, k int) *ListNode {
+	if head == nil || k == 0 {
+		return nil
+	}
+	res := &ListNode{Next: head}
+	pre := res
+	for head != nil {
+		tail := head
+		for i := 0; i < k; i++ {
+			if tail == nil {
+				return res.Next
+			}
+			tail = tail.Next
+		}
+		// 反转返回新的链表节点
+		reverseList := reverse(head, k)
+		pre.Next = reverseList
+		pre = head
+		head.Next = tail
+		head = head.Next
+	}
+	return res.Next
+}
+
 func reverse(head *ListNode, k int) *ListNode {
 	var p *ListNode
-	start := head
-	for head != nil {
+	for head != nil && k > 0 {
 		temp := head
 		head = head.Next
 		temp.Next = p
 		p = temp
 		k--
-		if k == 0 {
-			break
-		}
 	}
-	start.Next = head
-
 	return p
+}
+
+/*
+ 148. 排序链表
+    给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
+
+    输入：head = [4,2,1,3]
+    输出：[1,2,3,4]
+
+    输入：head = [-1,5,3,4,0]
+    输出：[-1,0,3,4,5]
+*/
+func SortList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	mid := slow.Next
+	slow.Next = nil
+	return MergeTwoLists(SortList(head), SortList(mid))
+}
+
+/*
+ 23. 合并 K 个升序链表
+    给你一个链表数组，每个链表都已经按升序排列。
+    请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+    输入：lists = [[1,4,5],[1,3,4],[2,6]]
+    输出：[1,1,2,3,4,4,5,6]
+
+    输入：lists = [[]]
+    输出：nil
+*/
+func MergeKLists(lists []*ListNode) *ListNode {
+	length := len(lists)
+	if length == 0 {
+		return nil
+	}
+
+	if length == 1 {
+		return lists[0]
+	}
+
+	mid := length / 2
+	left := MergeKLists(lists[:mid])
+	right := MergeKLists(lists[mid:])
+	return MergeTwoLists(left, right)
 }
