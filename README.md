@@ -1,2 +1,2 @@
 # algorithm
-algorithm for leetcode learn
+algorithm for leetcode
