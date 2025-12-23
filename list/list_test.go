@@ -46,7 +46,7 @@ func TestListNode_PrintVal(t *testing.T) {
 func TestReverseList(t *testing.T) {
 	data := []int{1, 2, 3, 4, 5}
 	head := BuildListByArr(data)
-	reversedHead := ReverseList(head)
+	reversedHead := ReverseList2(head)
 
 	result := reversedHead.PrintVal()
 	expected := []int{5, 4, 3, 2, 1}
@@ -97,7 +97,6 @@ func TestReverseKGroup(t *testing.T) {
 	temp.Next = res
 	result := res.PrintVal()
 	temp = head
-	head = head.Next
 	expected := []int{5, 4, 3, 2, 1}
 
 	if len(result) != len(expected) {

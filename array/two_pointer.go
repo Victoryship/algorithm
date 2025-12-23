@@ -1,4 +1,4 @@
-package leetcode
+package array
 
 /*
 LongestPalindrome 5. 最长回文子串
@@ -175,6 +175,8 @@ Trap 42. 接雨水
 
 	输入：height = [4,2,0,3,2,5]
 	输出：9
+
+	双指针就是从两头往中间走，谁的柱子矮就先算谁的接水量（因为矮的那边的最高值能确定），算完挪指针，直到指针相遇，总水量就出来了。
 */
 func Trap(height []int) int {
 	res, length := 0, len(height)
@@ -182,10 +184,28 @@ func Trap(height []int) int {
 		return res
 	}
 
-	maxLeft, maxRight := height[0], height[length-1]
-	// 能接住雨水的数组必须要有低谷，即对于某个位置。 在左右两边找到最大的柱子。 该位置能接的雨水为其中更小的一个值
-	for i := 1; i < length; i++ {
+	l, r := 0, length-1
+	maxLeft, maxRight := height[l], height[r]
+	for l <= r {
+		// 不断更新左边最大值
+		if height[l] > maxLeft {
+			maxLeft = height[l]
+		}
 
+		// 不断更新右边最大值
+		if height[r] > maxRight {
+			maxRight = height[r]
+		}
+
+		// 比较左边和右边最大值。小的那边开始移动（关键步骤，大的一边可以兜住水， 小的那边开始移动可能会有更大）
+		if maxLeft < maxRight {
+			res += maxLeft - height[l]
+			l++
+			continue
+		}
+
+		res += maxRight - height[r]
+		r--
 	}
 
 	return res

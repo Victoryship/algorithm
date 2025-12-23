@@ -50,7 +50,7 @@ func ReverseList2(head *ListNode) *ListNode {
 		return nil
 	}
 	p := &ListNode{Next: head}
-	for head != nil && head.Next != nil {
+	for head.Next != nil {
 		temp := head.Next
 		head.Next = temp.Next
 		temp.Next = p.Next
