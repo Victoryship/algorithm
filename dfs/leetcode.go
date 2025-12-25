@@ -2,6 +2,7 @@ package dfs
 
 import (
 	"sort"
+	"strings"
 )
 
 /*
@@ -204,15 +205,11 @@ func SolveNQueens(n int) [][]string {
 	var (
 		res       = make([][]string, 0, n)
 		backtrack func(row int)
-		choose    = make([]string, 0, n)
+		choose    = make([]string, n)
 	)
 
 	for i := 0; i < n; i++ {
-		str := ""
-		for j := 0; j < n; j++ {
-			str += "."
-		}
-		choose[i] = str
+		choose[i] = strings.Repeat(".", n)
 	}
 
 	backtrack = func(row int) {
@@ -241,23 +238,23 @@ func SolveNQueens(n int) [][]string {
 }
 
 func isVaild(row, col int, choose []string) bool {
-	if row < 0 || col < 0 || row >= len(choose) || col >= len(choose) {
-		return false
-	}
-
 	// 检查左斜边是否有“Q”
-	if row > 0 && col > 0 && choose[row-1][col-1] == 'Q' {
-		return false
+	for i, j := row-1, col-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
+		if choose[i][j] == 'Q' {
+			return false
+		}
 	}
 
 	// 检查右斜边是否有“Q”
-	if row > 0 && col > 0 && col < len(choose) && choose[row-1][col+1] == 'Q' {
-		return false
+	for i, j := row-1, col+1; i >= 0 && j < len(choose); i, j = i-1, j+1 {
+		if choose[i][j] == 'Q' {
+			return false
+		}
 	}
 
 	// 检查同一列是否有“Q”
-	for k := 0; k < col; k++ {
-		if choose[row][k] == 'Q' {
+	for i := row; i >= 0; i-- {
+		if choose[i][col] == 'Q' {
 			return false
 		}
 	}
